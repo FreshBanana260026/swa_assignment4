@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My AngularJS App</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="app.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+  <!-- <script src="lib/angular/angular.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular-route.js"></script>
+  <script src="app.js"></script>
+  <script src="view1/view1.js"></script>
+  <script src="view2/view2.js"></script>
+  <script src="core/version/version.js"></script>
+  <script src="core/version/version-directive.js"></script>
+  <script src="core/version/interpolate-filter.js"></script>
+</head>
+<body>
+<div data-ng-app="myApp" data-ng-controller="ctrl">
+<h1>Weather report</h1>
+<div id = "display">
+  All data for the latest measurement of each kind: <span>{{onex}}</span><br>
+  Minimum temperature for the last 5 days: <span>{{two}}</span><br>
+  Maximum temperature for the last 5 days: <span>{{three}}</span><br>
+  Total precipitation for the last 5 days: <span ng-bind="four"></span><br>
+  Average wind speed for the last 5 days: <span>{{five}}</span><br>
+  Dominant wind direction for the last 5 days: <span>{{six}}</span><br>
+  Average cloud coverage for the last 5 days: <span>{{seven}}</span><br>
+  Hourly predictions for the next 24 hours: <span>{{eight}}</span><br>
+  <div id="buttons">
+    <button ng-click= "getData('Horsens')">Horsens</button>
+    <button ng-click="getData('Aarhus')">Aarhus</button>
+    <button ng-click="getData('Copenhagen')">Copenhagen</button>
+  </div>
+</div>
+
+
+
+  <br>
+  <div id="myForm">
+    <h2>Report data:</h2>
+    <form ng-submit="postHistoricalData()">
+      Type: <select ng-model="fData.type" name="types">
+              <option value="temperature">temperature</option>
+              <option value="precipitation">precipitation</option>
+              <option value="wind speed">wind speed</option>
+              <option value="cloud coverage">cloud coverage</option>
+            </select> <br>
+      Year <input ng-model="theDate.year" ><br>
+            Month <input ng-model="theDate.month"><br>
+            Date <input ng-model="theDate.date"><br>
+            Hour <input ng-model="theDate.hour"><br>
+      Place: <select ng-model="fData.place" name="places">
+                <option value="Aarhus">Aarhus</option>
+                <option value="Horsens">Horsens</option>
+                <option value="Copenhagen">Copenhagen</option>
+              </select> <br>
+      Value: <input ng-model="fData.value"><br>
+      Unit: <input ng-model="fData.unit"> <br>
+      <input type="submit" value="Post"/>
+    </form>
+  </div>
+
+  <div id="interval">
+    <form ng-submit="displayDataInInterval()">
+      <h2>Data in interval:</h2>
+      City: <input ng-model="current.city"><br><br>
+
+      Start interval:<br>
+      Year <input ng-model="startDate.year" ><br>
+      Month <input ng-model="startDate.month"><br>
+      Date <input ng-model="startDate.date"><br>
+      Hour <input ng-model="startDate.hour"><br> <br>
+
+      End interval:<br>
+      Year <input ng-model="endDate.year" ><br>
+      Month <input ng-model="endDate.month"><br>
+      Date <input ng-model="endDate.date"><br>
+      Hour <input ng-model="endDate.hour"><br>
+      <input type="submit" value="Display"/>
+    </form>
+
+    <div>
+      {{sortedHisData}}
+      <br>
+      {{sortedForecastData}}
+    </div>
+  </div>
+
+  <div id="warnings">
+    <h2>Warnings:</h2>
+    <button ng-click="turnOn()">Turn on</button>
+    <button ng-click="turnOff()">Turn off</button>
+    Severity: <select ng-model="severity" name="severities">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    </select> <button ng-click="filterBySeverity()">Display</button><br>
+    <h3>RxJS:</h3>
+    <div class="whiteBox">
+
+    </div>
+    <h3>Sockets:</h3>
+    <div class="whiteBox">
+      <p>{{socketRes}}</p>
+    </div>
+    <h3>Socket - changes:</h3>
+    <div class="whiteBox">
+      <p>{{socketChanges}}</p>
+    </div>
+    <button ng-click="showDifferences()">Show differences</button>
+  </div>
+
+</div>
+</body>
+</html>
