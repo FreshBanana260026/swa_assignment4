@@ -47,6 +47,8 @@ ap.controller('ctrl', function($scope, $http) {
   $scope.severity = 0;
   let severityData = {};
   let oldData = {};
+  let oldDataTime = "";
+  let newDataTime = "";
 
   $scope.displayDataInInterval = async function() {
     const startingDate = new Date($scope.startDate.year, ($scope.startDate.month-1), $scope.startDate.date, $scope.startDate.hour, 0, 0, 0);
@@ -236,48 +238,44 @@ ap.controller('ctrl', function($scope, $http) {
       }
     }
   }
-
-  /*const getWarningsSocket = function () {
-    const socket = new WebSocket(" ws://localhost:8090/warnings");
-    socket.onopen = function (event) {
-      socket.send("subscribe");
-    };
-    socket.onmessage = function (event) {
-      if (angular.equals({}, oldData)){
-        oldData = event.data;
-      }
-      else {
-        oldData = severityData;
-      }
-      severityData = JSON.parse(event.data);
-      $scope.filterBySeverity();
-    }
-  };
-  getWarningsSocket();*/
-
+  let socket;
   $scope.turnOn = function () {
-    const socket = new WebSocket(" ws://localhost:8090/warnings");
+    socket = new WebSocket(" ws://localhost:8090/warnings");
     socket.onopen = function (event) {
       socket.send("subscribe");
     };
     socket.onmessage = function (event) {
-      if (angular.equals({}, oldData)){
-        oldData = JSON.parse(event.data);
+
+      if(JSON.parse(event.data).hasOwnProperty("warnings")) {
+        let date = new Date();
+        date.setSeconds(date.getSeconds()-10);
+        newDataTime = new Date(date).toISOString();
+        severityData = JSON.parse(event.data);
       }
       else {
-        oldData = severityData;
+        let date = new Date();
+        date.setSeconds(date.getSeconds()-10);
+        newDataTime = new Date(date).toISOString();
+        const updateData = JSON.parse(event.data);
+        let found = false;
+        for (let i of severityData.warnings) {
+          if ((updateData.id === i.id)) {
+            severityData.warnings[i] = updateData;
+            found = true;
+            break;
+          }
+        }
+        if (!found){
+          severityData.warnings.push(updateData);
+        }
       }
-      severityData = JSON.parse(event.data);
       $scope.filterBySeverity();
     }
   };
   $scope.turnOn();
 
   $scope.turnOff = function () {
-    const socket = new WebSocket(" ws://localhost:8090/warnings");
-    socket.onopen = function (event) {
       socket.send("unsubscribe");
-    };
     $scope.socketRes = "";
   };
 
@@ -286,38 +284,11 @@ ap.controller('ctrl', function($scope, $http) {
       return warning.severity >= $scope.severity;
     });
     $scope.$apply($scope.socketRes = result);
-  }
+  };
 
-  $scope.showDifferences = function () {
-    let result = [];
-    for (let i in oldData.warnings) {
-      let fromValue = "";
-      let toValue = "";
-      if(oldData.warnings[i].prediction !== null && oldData.warnings[i].prediction.hasOwnProperty("from")){
-      if (oldData.warnings[i].prediction.from > severityData.warnings[i].prediction.from) {
-        fromValue = "higher";
-      }
-      else if(oldData.warnings[i].prediction.from < severityData.warnings[i].prediction.from) {
-        fromValue = "lower";
-      }
-      else if(oldData.warnings[i].prediction.from === severityData.warnings[i].prediction.from){
-        fromValue = "same";
-      }}
-      if(oldData.warnings[i].prediction !== null && oldData.warnings[i].prediction.hasOwnProperty("to")){
-      if (oldData.warnings[i].prediction.to > severityData.warnings[i].prediction.to) {
-        toValue = "higher";
-      }
-      else if(oldData.warnings[i].prediction.to < severityData.warnings[i].prediction.to) {
-        toValue = "lower";
-      }
-      else{
-        toValue = "same"
-      }}
-      if(oldData.warnings[i].prediction !== null && fromValue !== "same" && toValue !== "same") {
-        result.push({id: oldData.warnings[i].id, from: fromValue, to: toValue});
-      }
-
-    }
-    $scope.socketChanges = result.toString();
+  $scope.showDifferences = async function () {
+    const result = await fetch('http://localhost:8080/warnings/since/'+newDataTime);
+    const resultJson = await result.json();
+    $scope.$apply($scope.socketChanges = resultJson.warnings);
   }
 });
