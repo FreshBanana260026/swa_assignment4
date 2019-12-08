@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My RxJS App</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="index.css">
+    <script src="script.js" type="module"></script>
+  </head>
+
+<body>
+<div id="warnings">
+    <h2>Warnings:</h2>
+    <button id="subscribe">Subscribe</button>
+    <button id="unsubscribe">Unsubscribe</button>
+    Severity: <select id="severities">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    </select> <button id="filterButton">Filter</button>
+    <h3>RxJS:</h3>
+    <div class="whiteBox" id="rxjsBox">
+
+    </div>
+    <h3>Changes:</h3>
+    <div class="whiteBox" id="changesBox">
+      <p></p>
+    </div>
+  </div>
+</body>
+</html>

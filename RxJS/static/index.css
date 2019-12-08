@@ -1,0 +1,35 @@
+body{
+    font-family:"Comic Sans MS", cursive, sans-serif;
+    background-color: #9dc2ff;
+  }
+
+button{
+    background-color: #ffd541;
+    border: 2px solid #ffd541;
+}
+
+button:hover{
+background-color: #ffc000;
+border: 2px solid #ffc000;
+}
+
+button:focus{
+background-color: #ffc000;
+border: 2px solid #ffc000;
+outline-style: none;
+}  
+
+select{
+    width: 40px;
+}
+
+#warnings{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.whiteBox{
+    width: 100%;
+    background-color: white;
+    min-height: 100px;
+}
